@@ -86,8 +86,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 Image.asset(
                   AppImage.arrowImage,
-                  height: Constants.fortyUnits,
-                  width: Constants.fortyUnits,
+                  height: Constants.twentyForUnits,
+                  width: Constants.twentyForUnits,
                 ),
                 const SizedBox(
                   width: Constants.sizedBoxFifty,
