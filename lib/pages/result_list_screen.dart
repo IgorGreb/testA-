@@ -16,6 +16,7 @@ class ResultListScreen extends StatelessWidget {
         builder: (context) => PathFinderPage(
           start: item['start'],
           end: item['end'],
+          field: {},
         ),
       ),
     );
@@ -47,7 +48,7 @@ class ResultListScreen extends StatelessWidget {
               borderOnForeground: false,
               color: Colors.white,
               child: InkWell(
-                onTap: () => _onTileTapped(context, item), 
+                onTap: () => _onTileTapped(context, item),
                 child: Center(
                   child: Text(
                     '$start -> $end',

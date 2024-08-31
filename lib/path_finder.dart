@@ -2,15 +2,18 @@ import 'package:flutter/material.dart';
 import 'cell.dart';
 import 'a_star.dart';
 import 'grid_painter.dart';
+
 class PathFinderPage extends StatelessWidget {
   final Map<String, dynamic> start;
   final Map<String, dynamic> end;
+  final Map<String, dynamic> field;  // Contains obstacle data from API
 
   const PathFinderPage({
-    Key? key,
+    super.key,
     required this.start,
     required this.end,
-  }) : super(key: key);
+    required this.field,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -21,6 +24,7 @@ class PathFinderPage extends StatelessWidget {
       );
     }
 
+    // Initialize grid
     final grid = List.generate(
       4,
       (x) => List.generate(
@@ -29,20 +33,18 @@ class PathFinderPage extends StatelessWidget {
       ),
     );
 
-    // Example of adding blocked cells
-    grid[0][0].isObstacle = true;
-    grid[1][0].isObstacle = true;
-    grid[2][0].isObstacle = true;
-
-    grid[0][1].isObstacle = true;
-    grid[0][2].isObstacle = true;
-
-    grid[1][3].isObstacle = true;
-    grid[2][3].isObstacle = true;
-    grid[3][3].isObstacle = true;
-
-    grid[3][2].isObstacle = true;
-    grid[3][1].isObstacle = true;
+    // Set obstacles based on field data from API
+    if (field['obstacles'] != null && field['obstacles'] is List) {
+      for (var obstacle in field['obstacles']) {
+        if (obstacle['x'] != null && obstacle['y'] != null) {
+          final x = obstacle['x'];
+          final y = obstacle['y'];
+          if (x >= 0 && x < grid.length && y >= 0 && y < grid[0].length) {
+            grid[x][y].isObstacle = true;
+          }
+        }
+      }
+    }
 
     final startCell = grid[start['x']][start['y']];
     final endCell = grid[end['x']][end['y']];
