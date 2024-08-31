@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:test_webspark/core/const.dart';
 import '../data/cell.dart';
 import '../data/a_star.dart';
 import 'grid_painter.dart';
@@ -60,13 +61,13 @@ class PathFinderPage extends StatelessWidget {
         path.map((cell) => '(${cell.x}, ${cell.y})').join(' -> ');
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Constants.colorWhite,
       appBar: AppBar(
-        shadowColor: Colors.black,
-        backgroundColor: Colors.blue,
-        title: const Text(
-          'Preview Screen',
-          style: TextStyle(color: Colors.white),
+        shadowColor: Constants.colorBlack,
+        backgroundColor: Constants.colorBlue,
+        title: Text(
+          Constants.previewTitle,
+          style: TextStyle(color: Constants.colorWhite),
         ),
         centerTitle: false,
       ),

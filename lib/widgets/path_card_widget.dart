@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:test_webspark/core/const.dart';
 
 class PathCardWidget extends StatelessWidget {
   const PathCardWidget({super.key, required this.path, required this.click});
@@ -10,19 +11,21 @@ class PathCardWidget extends StatelessWidget {
     return InkWell(
       onTap: click,
       child: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           border: Border(
-            bottom: BorderSide(color: Colors.black12, width: 1.0),
+            bottom: BorderSide(
+              color: Constants.colorBlack,
+              width: Constants.oneUnits,
+            ),
           ),
         ),
-        height: 50,
+        height: Constants.fiftyDotZero,
         width: MediaQuery.of(context).size.width,
         child: Center(
             child: Text(
           path,
           style: const TextStyle(
-            fontSize: 15,
-            fontWeight: FontWeight.bold,
+            fontSize: Constants.fifteenUnits,
           ),
         )),
       ),

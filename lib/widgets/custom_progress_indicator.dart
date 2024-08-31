@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:test_webspark/core/const.dart';
 
 class CustomProgressIndicator extends StatelessWidget {
   final double progress;
@@ -16,33 +17,33 @@ class CustomProgressIndicator extends StatelessWidget {
       alignment: Alignment.center,
       children: [
         // Background circular track
-        const SizedBox(
-          height: 150,
-          width: 150,
+        SizedBox(
+          height: Constants.sizedBoxOneHundredFifty,
+          width: Constants.sizedBoxOneHundredFifty,
           child: CircularProgressIndicator(
-            value: 1.0,
-            color: Colors.blue,
-            strokeWidth: 1.0,
+            value: Constants.oneUnits,
+            color: Constants.colorBlue,
+            strokeWidth: Constants.oneUnits,
           ),
         ),
         // Animated progress indicator
         TweenAnimationBuilder<double>(
-          tween: Tween<double>(begin: 0.0, end: progress),
-          duration: const Duration(milliseconds: 500),
+          tween: Tween<double>(begin: Constants.zeroUnits, end: progress),
+          duration:
+              const Duration(milliseconds: Constants.fiveHundredMilliseconds),
           builder: (context, value, child) {
             return SizedBox(
-              height: 150,
-              width: 150,
+              height: Constants.sizedBoxOneHundredFifty,
+              width: Constants.sizedBoxOneHundredFifty,
               child: CircularProgressIndicator(
                 value: value,
                 color: color,
-                strokeWidth: 3.0,
+                strokeWidth: Constants.treeUnits,
               ),
             );
           },
         ),
         // Progress percentage text
-       
       ],
     );
   }

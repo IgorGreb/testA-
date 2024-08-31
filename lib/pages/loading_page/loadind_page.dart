@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:test_webspark/pages/result_list_screen.dart';
+import 'package:test_webspark/core/const.dart';
+import 'package:test_webspark/pages/result_page/result_list_screen.dart';
 import 'package:test_webspark/widgets/custom_progress_indicator.dart';
 
 class LoadingPage extends StatefulWidget {
@@ -12,7 +13,7 @@ class LoadingPage extends StatefulWidget {
 }
 
 class _LoadingPageState extends State<LoadingPage> {
-  double _progress = 0.0;
+  double _progress = Constants.initialProgress;
   List<Map<String, dynamic>>? _data;
   String? _errorMessage;
 
@@ -24,28 +25,28 @@ class _LoadingPageState extends State<LoadingPage> {
 
   Future<void> _startFetching() async {
     setState(() {
-      _progress = 0.0; // Start progress
-      _errorMessage = null; // Clear previous error message
+      _progress = 0.0;
+      _errorMessage = null;
     });
 
     try {
       final data = await widget.fetchData;
       setState(() {
-        _progress = 1.0; // End progress
+        _progress = 1.0;
         if (data != null &&
             data['error'] == false &&
             data.containsKey('data') &&
             data['data'] is List) {
           _data = List<Map<String, dynamic>>.from(data['data']);
         } else {
-          _errorMessage = 'Invalid server response or error in response data.';
-          _progress = 0.0; // Reset progress if there's an error
+          _errorMessage = Constants.errorInvServResponse;
+          _progress = 0.0;
         }
       });
     } catch (e) {
       setState(() {
-        _errorMessage = 'Error fetching data: $e';
-        _progress = 0.0; // Reset progress if there's an error
+        _errorMessage = '${Constants.errorFetchingData}$e';
+        _progress = 0.0;
       });
     }
   }
@@ -60,7 +61,7 @@ class _LoadingPageState extends State<LoadingPage> {
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No data available to send.')),
+        const SnackBar(content: Text(Constants.errorNoData)),
       );
     }
   }
@@ -68,82 +69,86 @@ class _LoadingPageState extends State<LoadingPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Constants.colorWhite,
       appBar: AppBar(
-        backgroundColor: Colors.blue,
-        title:
-            const Text('Process Screen', style: TextStyle(color: Colors.white)),
+        backgroundColor: Constants.colorBlue,
+        title: Text(
+          Constants.processTitle,
+          style: TextStyle(color: Constants.colorWhite),
+        ),
         centerTitle: false,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(Constants.paddingSixtyUnits),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Display the completion message only if progress is complete and data is available
             if (_progress == 1.0 && _data != null)
               const Padding(
-                padding: EdgeInsets.only(bottom: 20.0),
+                padding: EdgeInsets.only(bottom: Constants.paddingTwentyUnits),
                 child: Text(
-                  'All calculations have finished, you can send\n your result to the server.',
+                  Constants.processDaneMessage,
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 15),
+                  style: TextStyle(fontSize: Constants.fifteenUnits),
                 ),
               ),
-            // Display animated percentage text only if there's no error
             if (_errorMessage == null)
               TweenAnimationBuilder<double>(
-                tween: Tween<double>(begin: 0, end: _progress * 100),
-                duration: const Duration(milliseconds: 500),
+                tween: Tween<double>(
+                  begin: Constants.zeroUnits,
+                  end: _progress * Constants.oneHundredUnits,
+                ),
+                duration: const Duration(
+                    milliseconds: Constants.fiveHundredMilliseconds),
                 builder: (context, value, child) {
                   return Text(
                     '${value.toStringAsFixed(0)}%',
-                    style: const TextStyle(fontSize: 24),
+                    style: const TextStyle(fontSize: Constants.twentyForUnits),
                   );
                 },
               ),
-            const SizedBox(height: 20),
-            // Progress bar separator
+            const SizedBox(height: Constants.sizedBoxTwenty),
             Container(
-              height: 1.0,
+              height: Constants.oneUnits,
               width: double.infinity,
-              color: Colors.grey[300],
+              color: Constants.colorGrey,
             ),
-            const SizedBox(height: 20),
-            // Display progress indicator while loading and no error
+            const SizedBox(height: Constants.sizedBoxTwenty),
             Center(
               child: CustomProgressIndicator(
                 progress: _progress,
-                color: Colors.blue,
+                color: Constants.colorBlue,
               ),
             ),
-            // Display error message if there is one
             if (_errorMessage != null)
               Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(Constants.paddingSixtyUnits),
                 child: Text(
                   _errorMessage!,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 18, color: Colors.red),
+                  style: TextStyle(
+                    fontSize: Constants.eighteenUnits,
+                    color: Constants.colorRed,
+                  ),
                 ),
               ),
-            // Display send result button only if progress is complete and data is available
             if (_progress == 1.0 && _data != null)
               Padding(
-                padding: const EdgeInsets.only(top: 20.0),
+                padding:
+                    const EdgeInsets.only(top: Constants.paddingTwentyUnits),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.blue,
-                    borderRadius: BorderRadius.circular(12),
+                    color: Constants.colorBlue,
+                    borderRadius: BorderRadius.circular(Constants.twelvelUnits),
                   ),
-                  height: 40,
-                  width: 300,
+                  height: Constants.fortyUnits,
+                  width: Constants.threeHundredUnits,
                   child: Center(
                     child: TextButton(
                       onPressed: _navigateToResultScreen,
-                      child: const Text(
-                        'Send result to server',
-                        style: TextStyle(color: Colors.white),
+                      child: Text(
+                        Constants.sendButtonText,
+                        style: TextStyle(color: Constants.colorBlack),
                       ),
                     ),
                   ),
