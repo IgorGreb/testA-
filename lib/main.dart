@@ -145,6 +145,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   controller: _urlController,
                   decoration: InputDecoration(
                     errorText: _errorMessage,
+                    // Custom bottom border color
+                    focusedBorder: const UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.black),
+                    ),
+                    enabledBorder: const UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.black),
+                    ),
                   ),
                 ),
               ),
