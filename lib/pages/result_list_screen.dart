@@ -9,11 +9,14 @@ class ResultListScreen extends StatelessWidget {
     required this.data,
   });
 
-  void _onTileTapped(BuildContext context, String start, String end) {
+  void _onTileTapped(BuildContext context, Map<String, dynamic> item) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => const PathFinderPage(),
+        builder: (context) => PathFinderPage(
+          start: item['start'],
+          end: item['end'],
+        ),
       ),
     );
   }
@@ -31,18 +34,20 @@ class ResultListScreen extends StatelessWidget {
         ),
         centerTitle: false,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ListView.builder(
-          itemCount: data.length,
-          itemBuilder: (context, index) {
-            final item = data[index];
-            final start = '(${item['start']['x']}, ${item['start']['y']})';
-            final end = '(${item['end']['x']}, ${item['end']['y']})';
+      body: ListView.builder(
+        itemCount: data.length,
+        itemBuilder: (context, index) {
+          final item = data[index];
+          final start = '(${item['start']['x']}, ${item['start']['y']})';
+          final end = '(${item['end']['x']}, ${item['end']['y']})';
 
-            return ListTile(
-              subtitle: InkWell(
-                onTap: () => _onTileTapped(context, start, end),
+          return SizedBox(
+            width: MediaQuery.of(context).size.width,
+            child: Card(
+              borderOnForeground: false,
+              color: Colors.white,
+              child: InkWell(
+                onTap: () => _onTileTapped(context, item), 
                 child: Center(
                   child: Text(
                     '$start -> $end',
@@ -50,13 +55,9 @@ class ResultListScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              contentPadding: const EdgeInsets.symmetric(vertical: 8.0),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
     );
   }
