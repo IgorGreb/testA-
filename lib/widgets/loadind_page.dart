@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:test_webspark/pages/result_list_screen.dart';
+import 'package:test_webspark/widgets/custom_progress_indicator.dart';
 
 class LoadingPage extends StatefulWidget {
   final Future<Map<String, dynamic>?> fetchData;
@@ -24,6 +25,7 @@ class _LoadingPageState extends State<LoadingPage> {
   Future<void> _startFetching() async {
     setState(() {
       _progress = 0.0; // Start progress
+      _errorMessage = null; // Clear previous error message
     });
 
     try {
@@ -37,11 +39,13 @@ class _LoadingPageState extends State<LoadingPage> {
           _data = List<Map<String, dynamic>>.from(data['data']);
         } else {
           _errorMessage = 'Invalid server response or error in response data.';
+          _progress = 0.0; // Reset progress if there's an error
         }
       });
     } catch (e) {
       setState(() {
         _errorMessage = 'Error fetching data: $e';
+        _progress = 0.0; // Reset progress if there's an error
       });
     }
   }
@@ -67,7 +71,8 @@ class _LoadingPageState extends State<LoadingPage> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.blue,
-        title: const Text('Process Screen', style: TextStyle(color: Colors.white)),
+        title:
+            const Text('Process Screen', style: TextStyle(color: Colors.white)),
         centerTitle: false,
       ),
       body: Padding(
@@ -85,17 +90,18 @@ class _LoadingPageState extends State<LoadingPage> {
                   style: TextStyle(fontSize: 15),
                 ),
               ),
-            // Display animated percentage text
-            TweenAnimationBuilder<double>(
-              tween: Tween<double>(begin: 0, end: _progress * 100),
-              duration: const Duration(milliseconds: 500),
-              builder: (context, value, child) {
-                return Text(
-                  '${value.toStringAsFixed(0)}%',
-                  style: const TextStyle(fontSize: 24),
-                );
-              },
-            ),
+            // Display animated percentage text only if there's no error
+            if (_errorMessage == null)
+              TweenAnimationBuilder<double>(
+                tween: Tween<double>(begin: 0, end: _progress * 100),
+                duration: const Duration(milliseconds: 500),
+                builder: (context, value, child) {
+                  return Text(
+                    '${value.toStringAsFixed(0)}%',
+                    style: const TextStyle(fontSize: 24),
+                  );
+                },
+              ),
             const SizedBox(height: 20),
             // Progress bar separator
             Container(
@@ -104,19 +110,13 @@ class _LoadingPageState extends State<LoadingPage> {
               color: Colors.grey[300],
             ),
             const SizedBox(height: 20),
-            // Display progress indicator while loading
-            if (_progress < 1.0)
-              Center(
-                child: SizedBox(
-                  height: 150,
-                  width: 150,
-                  child: CircularProgressIndicator(
-                    color: Colors.blue,
-                    value: _progress,
-                    strokeWidth: 4.0,
-                  ),
-                ),
+            // Display progress indicator while loading and no error
+            Center(
+              child: CustomProgressIndicator(
+                progress: _progress,
+                color: Colors.blue,
               ),
+            ),
             // Display error message if there is one
             if (_errorMessage != null)
               Padding(
@@ -129,20 +129,22 @@ class _LoadingPageState extends State<LoadingPage> {
               ),
             // Display send result button only if progress is complete and data is available
             if (_progress == 1.0 && _data != null)
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.blue,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                height: 40,
-                width: 300,
-                margin: const EdgeInsets.only(top: 20),
-                child: Center(
-                  child: TextButton(
-                    onPressed: _navigateToResultScreen,
-                    child: const Text(
-                      'Send result to server',
-                      style: TextStyle(color: Colors.white),
+              Padding(
+                padding: const EdgeInsets.only(top: 20.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.blue,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  height: 40,
+                  width: 300,
+                  child: Center(
+                    child: TextButton(
+                      onPressed: _navigateToResultScreen,
+                      child: const Text(
+                        'Send result to server',
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
                   ),
                 ),
