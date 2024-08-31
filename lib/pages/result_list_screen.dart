@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:test_webspark/path_finder.dart';
+import 'package:test_webspark/widgets/path_card_widget.dart';
+import 'package:test_webspark/widgets/path_finder.dart';
 
 class ResultListScreen extends StatelessWidget {
   final List<Map<String, dynamic>> data;
+  
 
   const ResultListScreen({
     super.key,
@@ -16,7 +18,7 @@ class ResultListScreen extends StatelessWidget {
         builder: (context) => PathFinderPage(
           start: item['start'],
           end: item['end'],
-          field: {},
+          field: const {},
         ),
       ),
     );
@@ -42,21 +44,9 @@ class ResultListScreen extends StatelessWidget {
           final start = '(${item['start']['x']}, ${item['start']['y']})';
           final end = '(${item['end']['x']}, ${item['end']['y']})';
 
-          return SizedBox(
-            width: MediaQuery.of(context).size.width,
-            child: Card(
-              borderOnForeground: false,
-              color: Colors.white,
-              child: InkWell(
-                onTap: () => _onTileTapped(context, item),
-                child: Center(
-                  child: Text(
-                    '$start -> $end',
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                ),
-              ),
-            ),
+          return PathCardWidget(
+            path: '$start -> $end',
+            click: () => _onTileTapped(context, item),
           );
         },
       ),

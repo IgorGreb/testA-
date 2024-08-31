@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'cell.dart';
+import '../data/cell.dart';
 
 class GridPainter extends CustomPainter {
   final List<List<Cell>> grid;
@@ -18,22 +18,8 @@ class GridPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final cellSize = size.width / grid[0].length;
     final paint = Paint()..color = Colors.black;
-
-    // Draw grid lines
-    for (int i = 0; i <= grid.length; i++) {
-      canvas.drawLine(
-        Offset(i * cellSize, 0),
-        Offset(i * cellSize, size.height),
-        paint,
-      );
-    }
-    for (int i = 0; i <= grid[0].length; i++) {
-      canvas.drawLine(
-        Offset(0, i * cellSize),
-        Offset(size.width, i * cellSize),
-        paint,
-      );
-    }
+    final double width = grid[0].length * cellSize;
+    final double height = grid.length * cellSize;
 
     // Draw cells
     for (var row in grid) {
@@ -44,11 +30,8 @@ class GridPainter extends CustomPainter {
             Rect.fromLTWH(cell.x * cellSize, cell.y * cellSize, cellSize, cellSize),
             paint,
           );
-
-          // Draw text for obstacle cells in white
           _drawText(canvas, cell, cellSize, Colors.white);
         } else {
-          // Draw text for non-obstacle cells in black
           _drawText(canvas, cell, cellSize, Colors.black);
         }
       }
@@ -61,7 +44,7 @@ class GridPainter extends CustomPainter {
         Rect.fromLTWH(cell.x * cellSize, cell.y * cellSize, cellSize, cellSize),
         paint,
       );
-      _drawText(canvas, cell, cellSize, Colors.white); // Ensure path text is visible
+      _drawText(canvas, cell, cellSize, Colors.white); 
     }
 
     // Draw start cell
@@ -70,7 +53,7 @@ class GridPainter extends CustomPainter {
       Rect.fromLTWH(startCell.x * cellSize, startCell.y * cellSize, cellSize, cellSize),
       paint,
     );
-    _drawText(canvas, startCell, cellSize, Colors.white); // Start cell text in white
+    _drawText(canvas, startCell, cellSize, Colors.white);
 
     // Draw end cell
     paint.color = const Color(0xFF009688);
@@ -78,7 +61,26 @@ class GridPainter extends CustomPainter {
       Rect.fromLTWH(endCell.x * cellSize, endCell.y * cellSize, cellSize, cellSize),
       paint,
     );
-    _drawText(canvas, endCell, cellSize, Colors.white); // End cell text in white
+    _drawText(canvas, endCell, cellSize, Colors.white);
+
+    // Draw grid lines only around cells
+    paint.color = Colors.black.withOpacity(0.2); 
+    paint.strokeWidth = 1.0; // Set the thickness of the lines
+
+    for (int i = 0; i <= grid.length; i++) {
+      canvas.drawLine(
+        Offset(0, i * cellSize),
+        Offset(width, i * cellSize),
+        paint,
+      );
+    }
+    for (int i = 0; i <= grid[0].length; i++) {
+      canvas.drawLine(
+        Offset(i * cellSize, 0),
+        Offset(i * cellSize, height),
+        paint,
+      );
+    }
   }
 
   void _drawText(Canvas canvas, Cell cell, double cellSize, Color textColor) {
@@ -89,10 +91,10 @@ class GridPainter extends CustomPainter {
 
     final textStyle = TextStyle(
       color: textColor,
-      fontSize: cellSize * 0.2, // Adjust the size of the text
+      fontSize: cellSize * 0.2, 
     );
 
-    final text = '${cell.x}.${cell.y}';
+    final text = '${cell.x},${cell.y}';
     textPainter.text = TextSpan(
       text: text,
       style: textStyle,
@@ -108,6 +110,10 @@ class GridPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return false;
+    return oldDelegate is GridPainter &&
+           (oldDelegate.grid != grid ||
+            oldDelegate.path != path ||
+            oldDelegate.startCell != startCell ||
+            oldDelegate.endCell != endCell);
   }
 }

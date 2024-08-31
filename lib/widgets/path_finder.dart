@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'cell.dart';
-import 'a_star.dart';
+import '../data/cell.dart';
+import '../data/a_star.dart';
 import 'grid_painter.dart';
 
 class PathFinderPage extends StatelessWidget {
   final Map<String, dynamic> start;
   final Map<String, dynamic> end;
-  final Map<String, dynamic> field;  // Contains obstacle data from API
+  final Map<String, dynamic> field;
 
   const PathFinderPage({
     super.key,
@@ -18,7 +18,10 @@ class PathFinderPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Validate start and end data
-    if (start['x'] == null || start['y'] == null || end['x'] == null || end['y'] == null) {
+    if (start['x'] == null ||
+        start['y'] == null ||
+        end['x'] == null ||
+        end['y'] == null) {
       return const Scaffold(
         body: Center(child: Text('Invalid start or end data')),
       );
@@ -34,12 +37,12 @@ class PathFinderPage extends StatelessWidget {
     );
 
     // Set obstacles based on field data from API
-    if (field['obstacles'] != null && field['obstacles'] is List) {
-      for (var obstacle in field['obstacles']) {
-        if (obstacle['x'] != null && obstacle['y'] != null) {
-          final x = obstacle['x'];
-          final y = obstacle['y'];
-          if (x >= 0 && x < grid.length && y >= 0 && y < grid[0].length) {
+    if (field['field'] != null && field['field'] is List) {
+      final fieldList = field['field'] as List;
+      for (int x = 0; x < fieldList.length; x++) {
+        final row = fieldList[x] as String;
+        for (int y = 0; y < row.length; y++) {
+          if (row[y] == 'X') {
             grid[x][y].isObstacle = true;
           }
         }
@@ -52,6 +55,10 @@ class PathFinderPage extends StatelessWidget {
     final aStar = AStar(grid);
     final path = aStar.findPath(startCell, endCell);
 
+    // Convert path to a readable format
+    final pathString =
+        path.map((cell) => '(${cell.x}, ${cell.y})').join(' -> ');
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -63,14 +70,29 @@ class PathFinderPage extends StatelessWidget {
         ),
         centerTitle: false,
       ),
-      body: CustomPaint(
-        painter: GridPainter(
-          grid,
-          path,
-          startCell: startCell,
-          endCell: endCell,
-        ),
-        child: Container(),
+      body: Column(
+        children: [
+          Expanded(
+            child: CustomPaint(
+              painter: GridPainter(
+                grid,
+                path,
+                startCell: startCell,
+                endCell: endCell,
+              ),
+              child: Container(),
+            ),
+          ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(18.0),
+              child: Text(
+                pathString,
+                style: const TextStyle(fontSize: 16),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:test_webspark/core/const.dart';
+import 'package:test_webspark/core/images.dart';
 import 'package:test_webspark/pages/result_list_screen.dart';
 import 'package:test_webspark/widgets/loadind_page.dart';
 
@@ -85,7 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
       final result = await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => LoadindPage(
+            builder: (context) => LoadingPage(
                   fetchData: _fetchDataFromServer(_apiUrl),
                 )),
       );
@@ -96,7 +98,8 @@ class _HomeScreenState extends State<HomeScreen> {
           context,
           MaterialPageRoute(
               builder: (context) => ResultListScreen(
-                    key: result, data: const [], // Pass the result data
+                    key: result,
+                    data: const [],
                   )),
         );
       }
@@ -123,24 +126,30 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Text(
-              'Set valid API base URL to fetch tasks',
-              style: TextStyle(fontSize: 16),
-            ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: apiTextInput,
           ),
           const SizedBox(height: 10),
-          Padding(
-            padding: const EdgeInsets.only(left: 8.0, right: 8),
-            child: TextField(
-              controller: _urlController,
-              decoration: InputDecoration(
-                errorText: _errorMessage,
+          Row(
+            children: [
+              const SizedBox(
+                width: 15,
               ),
-            ),
+              arrowImage,
+              const SizedBox(
+                width: 50,
+              ),
+              Expanded(
+                child: TextField(
+                  controller: _urlController,
+                  decoration: InputDecoration(
+                    errorText: _errorMessage,
+                  ),
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 20),
           SizedBox(
             height: MediaQuery.of(context).size.height / 1.5,
           ),
@@ -148,15 +157,15 @@ class _HomeScreenState extends State<HomeScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 50.0),
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.blue,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              height: 40,
+                  color: Colors.blue.shade300,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.blue)),
+              height: 45,
               width: 300,
               child: TextButton(
                 onPressed: _startProcess,
                 child: const Text(
-                  'Start Counting Process',
+                  'Start counting process',
                   style: TextStyle(color: Colors.black),
                 ),
               ),
